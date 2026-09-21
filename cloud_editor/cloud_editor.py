@@ -67,6 +67,7 @@ import urllib.parse
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+RUNTIME = os.environ.get("RUNTIME_DIR") or HERE
 CONFIG_PATH = os.path.join(HERE, "config.json")
 STATE_PATH = os.path.join(RUNTIME, "state.json")
 FEEDBACK_DIR = os.path.join(RUNTIME, "feedback")
@@ -77,7 +78,6 @@ PAUSED_PATH = os.path.join(HERE, "paused.flag")
 HUB_INDEX = os.path.join(HERE, "..", "hub", "games", "index.json")
 REPO_DEFAULT = r"C:\Users\aaron\octogram-arcade"
 GODOT = os.environ.get("GODOT_BIN") or r"C:\Users\aaron\AppData\Local\Godot\Godot_v4.7.1-stable_win64.exe"
-RUNTIME = os.environ.get("RUNTIME_DIR") or HERE
 LLM_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 LLM_MODEL = "z-ai/glm-5.3"          # BOSS tier: triage, review, last word
 WORKER_URL = "https://openrouter.ai/api/v1/chat-completions"
