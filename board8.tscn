@@ -1,0 +1,268 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/board8_ui.gd" id="1_board"]
+[ext_resource type="Script" path="res://scripts/reveal_ui.gd" id="2_reveal"]
+[ext_resource type="Script" path="res://scripts/circle_button.gd" id="3_circ"]
+
+[sub_resource type="StyleBoxFlat" id="SBF_panel"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.07, 0.12, 0.22, 0.82)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.55, 0.78, 0.85)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0.02, 0.08, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="SBF_toast"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.3, 0.09, 0.12, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.45, 0.4, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0.02, 0.08, 0.4)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[node name="Board8" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_board")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Layout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.32, 1)
+theme_override_font_sizes/font_size = 44
+text = "EIGHT LETTERS"
+horizontal_alignment = 1
+
+[node name="HeaderRow" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LevelLabel" type="Label" parent="Margin/Layout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "LEVEL 1"
+
+[node name="HeaderSpacer" type="Control" parent="Margin/Layout/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TimerLabel" type="Label" parent="Margin/Layout/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.32, 1)
+theme_override_font_sizes/font_size = 52
+text = "2:00"
+
+[node name="ScorePanel" type="PanelContainer" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("SBF_panel")
+
+[node name="ScoreBox" type="VBoxContainer" parent="Margin/Layout/ScorePanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ScoreRow" type="HBoxContainer" parent="Margin/Layout/ScorePanel/ScoreBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScoreLabel" type="Label" parent="Margin/Layout/ScorePanel/ScoreBox/ScoreRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "SCORE 0"
+
+[node name="ScoreSpacer" type="Control" parent="Margin/Layout/ScorePanel/ScoreBox/ScoreRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TargetLabel" type="Label" parent="Margin/Layout/ScorePanel/ScoreBox/ScoreRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.55, 1)
+theme_override_font_sizes/font_size = 24
+text = "TARGET 80"
+
+[node name="BarSlot" type="Control" parent="Margin/Layout/ScorePanel/ScoreBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+
+[node name="CurrentWordLabel" type="Label" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "-"
+horizontal_alignment = 1
+
+[node name="WordsCounter" type="Label" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "WORDS: 0"
+
+[node name="WordsScroll" type="ScrollContainer" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="WordsList" type="VBoxContainer" parent="Margin/Layout/WordsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="LetterArea" type="HBoxContainer" parent="Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 84)
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="BottomControls" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SubmitButton" type="Button" parent="Margin/Layout/BottomControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(124, 78)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 22
+text = "SUBMIT"
+script = ExtResource("3_circ")
+accent = "gold"
+
+[node name="ClearButton" type="Button" parent="Margin/Layout/BottomControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(116, 78)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 22
+text = "CLEAR"
+script = ExtResource("3_circ")
+accent = "gold"
+
+[node name="DelButton" type="Button" parent="Margin/Layout/BottomControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 60)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 15
+text = "DEL"
+script = ExtResource("3_circ")
+
+[node name="ShuffleButton" type="Button" parent="Margin/Layout/BottomControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 60)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 15
+text = "SHUF"
+script = ExtResource("3_circ")
+
+[node name="BottomSpacer" type="Control" parent="Margin/Layout/BottomControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HowToButton" type="Button" parent="Margin/Layout/BottomControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(136, 58)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 14
+text = "HOW TO PLAY"
+script = ExtResource("3_circ")
+
+[node name="LevelUpLabel" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.32, 1)
+theme_override_font_sizes/font_size = 56
+text = "LEVEL UP!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Toast" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -270.0
+offset_top = 120.0
+offset_right = 270.0
+offset_bottom = 184.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("SBF_toast")
+
+[node name="ToastLabel" type="Label" parent="Toast"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RevealOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_reveal")
