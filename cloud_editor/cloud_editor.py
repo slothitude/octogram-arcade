@@ -1,9 +1,11 @@
 """cloud_editor — the feedback→implement→deploy agent harness for Octogram Arcade.
 
-v3: the interactive Telegram experience — inline keyboards + callback queries,
-a per-chat session FSM, deploy confirmation buttons, and file uploads.
-All v2 behavior is preserved (commands, deep links, the gate wall, Actions mode,
-the v2 selftest cases).
+v4: the two-tier LLM company — glm-5.3 is the BOSS (triage -> plan JSON ->
+review; the reviewer owns the last word) and openrouter/free workers draft the
+code/data subtasks. All v3 behavior is preserved (inline keyboards + callback
+queries, the per-chat session FSM, deploy confirmation buttons, file uploads,
+and all v2 behavior: commands, deep links, the gate wall, Actions mode, the
+selftest cases). A worker failure degrades silently to boss-only.
 
 Loop (run on Rog with no flags, or as a scheduled GitHub Actions job with --once):
   1. Poll Telegram getUpdates. Updates route by shape:
@@ -22,8 +24,12 @@ Loop (run on Rog with no flags, or as a scheduled GitHub Actions job with --once
        message (photo/voice/audio/.zip)  -> uploads/<chat_id>/<md5>.<ext>; a photo
          inside a newgame session becomes the game logo, anything else attaches to
          the next feedback from that chat; voice also queues a transcription order.
-  2. For feedback: ask glm-5.3 (NVIDIA free endpoint, OpenAI-compatible) to triage and
-     produce a unified diff implementing the change in the arcade repo.
+  2. For feedback: glm-5.3 (NVIDIA free endpoint, OpenAI-compatible) triages the
+     tier and emits a plan JSON ({reply, subtasks}); openrouter/free workers draft
+     one diff per code/data subtask; the boss reviews and either APPROVES the
+     merged drafts or outputs its own corrected diff — the diff that ships is
+     always the boss's. No parseable plan, or the worker endpoint is dead (401/
+     429/timeout)? The boss does it all itself (silent v3 single-shot fallback).
   3. Apply the patch on a per-order scratch branch (cloud_editor/scratch-<order>);
      run THE GATE WALL (Godot headless suites).
        T1/T2 diffs (art, data/numbers) still auto-deploy exactly like v2.
@@ -38,8 +44,9 @@ Multi-tenant: every message's from.id is recorded with the feedback/order it pro
 replies go to the SAME chat the message came from, and are mirrored to the owner's
 review channel (config chat_id) with a "[player <id> <name>]" prefix.
 
-Config: env TG_TOKEN / NVAPI_KEY / CHAT_ID win, else cloud_editor/config.json
-        {bot_token, chat_id, nvapi_key, repo_dir} (local default).
+Config: env TG_TOKEN / NVAPI_KEY / OPENROUTER_KEY / CHAT_ID win, else
+        cloud_editor/config.json
+        {bot_token, chat_id, nvapi_key, openrouter_key, repo_dir} (local default).
 State:  cloud_editor/state.json {last_update_id, deployed_count, last_action}
 Queue:  cloud_editor/feedback/*.json (audit trail of every request)
 Orders: cloud_editor/orders/*.json  (new-game + voice transcription work orders)
@@ -71,7 +78,9 @@ HUB_INDEX = os.path.join(HERE, "..", "hub", "games", "index.json")
 REPO_DEFAULT = r"C:\Users\aaron\octogram-arcade"
 GODOT = r"C:\Users\aaron\AppData\Local\Godot\Godot_v4.7.1-stable_win64.exe"
 LLM_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-LLM_MODEL = "z-ai/glm-5.3"
+LLM_MODEL = "z-ai/glm-5.3"          # BOSS tier: triage, review, last word
+WORKER_URL = "https://openrouter.ai/api/v1/chat-completions"
+WORKER_MODEL = "openrouter/free"    # WORKER tier: drafts code/data subtasks
 GATE_SUITES = ["run_tests", "run_rpg_tests", "smoke_battle", "smoke_menu",
                "run_e2e", "run8_tests", "run8_e2e"]
 MAX_ATTEMPTS = 3
